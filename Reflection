@@ -1,0 +1,20 @@
+What I Did:
+
+I created a Calculator class that takes an Adder class as a dependency. The calculator class would store the
+string to be computed, and pass it along to the Adder. The Calculator class was fully fleshed out before any
+work on the Adder began. I then began test driving the Adders for each Kata iteration. I started with comma
+separated, then moved onto multiple separations, then finally added custom separations before hitting my
+hour limit.
+
+What I Did Right:
+
+I got a lot done. I was able to abstract away the adding and parsing implementation into the Adder interface,
+and was able to mock it using an inner implementation of that innerface in my Test class. The Calculator class
+was finished before any Adder implementations were added.
+
+What I Did Wrong:
+
+It turns out a big part of this Kata is the parser. I should have focused more on the parser, and less on the
+adder. I also should have recognized that the adder and the parser were separate responsibilities and created
+separate classes for handling them. I also created no application, so I have no way to see my code at work,
+other than running the tets.
