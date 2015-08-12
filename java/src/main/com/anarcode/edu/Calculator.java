@@ -1,15 +1,20 @@
 package main.com.anarcode.edu;
 
-import main.com.anarcode.edu.AdderInterface;
+import test.com.anarcode.edu.TestClass;
+
+import java.util.List;
 
 public class Calculator {
-    private AdderInterface adder;
+    private ParserInterface parser;
+    private OperationInterface operation;
 
-    public Calculator(AdderInterface adder) {
-        this.adder = adder;
+    public Calculator(ParserInterface parser, OperationInterface operation) {
+        this.parser = parser;
+        this.operation = operation;
     }
 
     public int add(String s) {
-        return adder.getResult(s);
+        List<Integer> values = parser.parse(s);
+        return operation.operate(values);
     }
 }
