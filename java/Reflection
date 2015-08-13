@@ -1,1 +1,28 @@
-//;\n4;5
+What I Did:
+
+I implemented a fairly complicated code base in under an hour. This one includes four notable classes (Adder,
+Parser, and DelimeterDetector, and Calculator). Calculator holds the base operation add, as well as references
+to instances of the other classes interfaces (AdderInterface, ParserInterface, DelimeterDetectorInterface).
+This allowed me to start by mocking out dependencies in my early calculator (which only had a Parser and an Adder
+as per the early tasks), and then worrying about the implementations of the responsible components, finally
+updating the calculator class and adding the last tests which allow for the custom delimeters.
+
+What I Did Right:
+
+I made a significant and very clean codebase in a relatively short amount of time. This was accomplished by
+truly sticking to the single responsibility principle, and I did have some advantages due to having done some
+of the components before. I found myself skipping at times, but never writing any code that was not test driven.
+An interesting thing that happened, was at one point I was stuck trying to figure out how to implement a certain
+piece of code (adding teh delimeter detector to be exact). What I ended up doing was finishing up my tests without
+worrying about the implementation, and allowing my tests to drive the code into existence. And they did. The code
+pretty much wrote itself, which was nice to see TDD working out so well.
+
+What I Did Wrong:
+
+The only thing I really think I did wrong (except for the fact it took me still twice as long as I would like it
+too, and I would like to get one more thing done in that half an hour), is that my actual application doesn't
+work! It can read one line fine, but if there's new lines, it tries to separate them into different lines and
+ignores the newline character. Not very effective for a program that relies heavily on multi-line input, so it
+is a bug I will have to fix in later runs. Not sure how to go about doing that right now. Another silly thing
+is that I called it "Delimeters", like they're trying to deligate meters, when actually the word is Delimiters,
+like you're trying to destroy limits. The second makes more sense. Then again, I know nothing about linguistics.
