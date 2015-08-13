@@ -7,98 +7,138 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class TestClass {
 
     @Test
-    public void addWithEmptyStringReturnsZero() {
-        List<Integer> integerArrayList = new ArrayList<Integer>();
-        MockOperation operation = new MockOperation();
-        MockParser parser = new MockParser();
+    public void calculatorCalls_DelimeterDetector_Adder_Parser() {
+        MockParser mockParser = new MockParser();
+        MockAdder mockAdder = new MockAdder();
+        MockDelimeterDetector mockDelimeterDetector = new MockDelimeterDetector();
+        Calculator calculator = new Calculator(mockParser, mockAdder, mockDelimeterDetector);
 
-        operation.setReturnValue(0);
-        parser.setReturnValue(integerArrayList);
+        int result = calculator.add("//;\n2;3");
 
-        Calculator calculator = new Calculator(parser, operation);
-        int result = calculator.add("");
         assertEquals(0, result);
+        assertEquals("//;\n2;3", mockDelimeterDetector.getLastParameters());
+        assertEquals("2;3", mockParser.getFirstParameter());
+        assertEquals(';', mockParser.getSecondParameter());
+        assertEquals(new ArrayList<Integer>(), mockAdder.getLastParameters());
 
-        assertEquals(integerArrayList, operation.getValues());
-        assertEquals("", parser.getValues());
+
     }
 
     @Test
-    public void addWithOneItemReturnsItem() {
-        List<Integer> integerArrayList = Arrays.asList(3);
-        MockParser parser = new MockParser();
-        MockOperation operation = new MockOperation();
+    public void parserParsesStringCorrectly() {
+        Parser subject = new Parser();
 
-        parser.setReturnValue(integerArrayList);
-        operation.setReturnValue(3);
+        List<Integer> result = subject.parseString("", null);
+        assertEquals(new ArrayList<Integer>(), result);
+        result = subject.parseString("3", null);
+        assertEquals(Arrays.asList(3), result);
 
-        Calculator calculator = new Calculator(parser, operation);
-        int result = calculator.add("3");
-        assertEquals(3, result);
-        assertEquals(integerArrayList, operation.getValues());
-        assertEquals("3", parser.getValues());
+        result = subject.parseString("5,6", null);
+        assertEquals(Arrays.asList(5,6), result);
     }
 
     @Test
-    public void parserReturnsExpectedValues() {
-        MyParser myParser = new MyParser();
+    public void adderReturnsCorrectValues() {
+        Adder subject = new Adder();
 
-        assertEquals(new ArrayList<Integer>(), myParser.parse(""));
-        assertEquals(Arrays.asList(3), myParser.parse("3"));
-        assertEquals(Arrays.asList(1,2), myParser.parse("1,2"));
-        assertEquals(Arrays.asList(1,2,3), myParser.parse("1,2,3"));
+        int result = subject.addList(new ArrayList<Integer>());
+        assertEquals(0, result);
+        result = subject.addList(Arrays.asList(1));
+        assertEquals(1, result);
+        result = subject.addList(Arrays.asList(1, 2, 3));
+        assertEquals(6, result);
     }
 
-    public void adderReturnsExpectedValues() {
-        MyAdder myAdder = new MyAdder();
+    @Test
+    public void parserWithNewlinesAndCommasReturnsCorrectValues() {
+        Parser subject = new Parser();
 
-        assertEquals(0, myAdder.operate(Arrays.<Integer>asList()));
-        assertEquals(3, myAdder.operate(Arrays.<Integer>asList(3)));
-        assertEquals(4, myAdder.operate(Arrays.<Integer>asList(3, 1)));
-        assertEquals(5, myAdder.operate(Arrays.<Integer>asList(1,2,2)));
+        List<Integer> result = subject.parseString("1\n2", null);
+        assertEquals(Arrays.asList(1,2), result);
+
+        result = subject.parseString("1\n2,3", null);
+        assertEquals(Arrays.asList(1,2,3), result);
+
+    }
+
+    @Test
+    public void delimeterDetectorReturnsDelimeter() {
+        DelimeterDetector delimeterDetector = new DelimeterDetector();
+
+        char response1 = delimeterDetector.findDelimeter("//a\n3a4,5");
+        assertEquals('a',response1);
+
+        Character response2 = delimeterDetector.findDelimeter("3\n4");
+        assertEquals(null, response2
+        );
+    }
+
+    @Test
+    public void parserPassedNewDelimeterUsesDelimeter() {
+        Parser parser = new Parser();
+
+        List<Integer> response = parser.parseString("3;5\n6,7", ';');
+        assertEquals(Arrays.asList(3,5,6,7), response);
     }
 
     private class MockParser implements ParserInterface{
-        private List<Integer> returnValue;
-        private String values;
+
+        private String lastParameters;
+        private String firstParameter;
+        private Character secondParameter;
+
+        public String getLastParameters() {
+            return lastParameters;
+        }
 
         @Override
-        public List<Integer> parse(String s) {
-            this.values = s;
-            return returnValue;
+        public List<Integer> parseString(String s, Character delim) {
+            this.firstParameter = s;
+            this.secondParameter = delim;
+            return new ArrayList<Integer>();
         }
 
-        public void setReturnValue(List<Integer> returnValue) {
-            this.returnValue = returnValue;
+        public String getFirstParameter() {
+            return firstParameter;
         }
 
-        public String getValues() {
-            return values;
+        public char getSecondParameter() {
+            return secondParameter;
         }
     }
 
-    private class MockOperation implements OperationInterface{
-        private int returnValue;
-        private List<Integer> values;
+    private class MockAdder implements AdderInterface{
+        private List<Integer> lastParameters;
+
+        public List<Integer> getLastParameters() {
+            return lastParameters;
+        }
 
         @Override
-        public int operate(List<Integer> values) {
-            this.values = values;
-            return returnValue;
+        public int addList(List<Integer> input) {
+            lastParameters = input;
+            return 0;
+        }
+    }
+
+    private class MockDelimeterDetector implements DelimeterDetectorInterface {
+
+
+        private String lastParameters;
+
+        @Override
+        public Character findDelimeter(String s) {
+            lastParameters = s;
+            return ';';
         }
 
-        public void setReturnValue(int returnValue) {
-            this.returnValue = returnValue;
-        }
-
-        public List<Integer> getValues() {
-            return values;
+        public String getLastParameters() {
+            return lastParameters;
         }
     }
 }

@@ -6,15 +6,14 @@ import java.io.InputStreamReader;
 
 public class Application {
     public static void main(String[] args) {
-        Calculator calculator = new Calculator(new MyParser(), new MyAdder());
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while(true)
-        {
-            System.out.println("Enter an expression:");
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        Calculator calculator = new Calculator(new Parser(), new Adder(), new DelimeterDetector());
+        while (true) {
             try {
-                String in = br.readLine();
-                int sum = calculator.add(in);
-                System.out.println("sum = " + sum);
+                System.out.println("Enter numbers to add.");
+                String input = in.readLine();
+                System.out.println(calculator.add(input));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
